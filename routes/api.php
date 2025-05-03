@@ -1,9 +1,13 @@
 <?php
-// routes/api.php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LogoutController;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/test', function() {
+    return response()->json(['message' => 'Test Route is working']);
 });
+
+// Register route for API
+Route::post('/register', [RegisterController::class, 'register']);
+Route::middleware('auth:sanctum')->post('/logout', [LogoutController::class, 'logout']);
