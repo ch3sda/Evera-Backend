@@ -11,15 +11,24 @@ class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
     
-        if ($user && $user->currentAccessToken()) {
-            $user->currentAccessToken()->delete();
+            if (!$user) {
+                return response()->json(['message' => 'No authenticated user'], 401);
+            }
+    
+            $token = $user->currentAccessToken();
+    
+            if (!$token) {
+                return response()->json(['message' => 'No access token found'], 401);
+            }
+    
+            $token->delete();
+    
             return response()->json(['message' => 'Logged out successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Logout failed', 'details' => $e->getMessage()], 500);
         }
-    
-        return response()->json(['message' => 'No active token found'], 401);
     }
-    
-    
 }
