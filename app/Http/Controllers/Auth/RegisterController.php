@@ -19,6 +19,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'role' => 'in:user,organizer,admin', // allowed roles
         ]);
 
         if ($validator->fails()) {
@@ -30,6 +31,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role ?? 'user', // default to 'user' if not provided
         ]);
 
         // Optionally, you can log the user in after registration
