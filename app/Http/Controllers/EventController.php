@@ -27,7 +27,7 @@ class EventController extends Controller
 
         // Create the event
         $event = Event::create([
-            'user_id' => 1, // Use the authenticated user's ID as the organizer
+            'user_id' => 3, // Use the authenticated user's ID as the organizer
             'title' => $request->title,
             'category_id' => $request->category_id,
             'location' => $request->location,
@@ -94,4 +94,29 @@ class EventController extends Controller
         // Return success message
         return response()->json(['message' => 'Event deleted successfully'], 200);
     }
+
+    public function upcoming(Request $request)
+    {
+        $query = Event::with(['category', 'organizer'])
+            ->where('event_datetime', '>', now());
+
+        // Optional Filters
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('organizer_id')) {
+            $query->where('user_id', $request->organizer_id);
+        }
+
+        if ($request->has('date')) {
+            $query->whereDate('event_datetime', $request->date);
+        }
+
+        // Get the events
+        $events = $query->orderBy('event_datetime')->get();
+
+        return response()->json($events);
+    }
+
 }

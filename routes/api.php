@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Api\EventCategoryController;
 use App\Http\Controllers\EventController;
-
+use App\Http\Controllers\AdminDashboardController;
 
 
 Route::get('/test', function() {
@@ -22,6 +22,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 Route::apiResource('categories', EventCategoryController::class);
+Route::get('/events/upcoming', [EventController::class, 'upcoming'])->name('events.upcoming');
 Route::apiResource('events', controller: EventController::class);
 
+//Route::middleware('auth:sanctum')->get('/admin/dashboard', [AdminDashboardController::class, 'stats']);
+Route::get('/admin/dashboard', action: [AdminDashboardController::class, 'stats']);
