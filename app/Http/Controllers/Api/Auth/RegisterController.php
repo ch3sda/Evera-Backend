@@ -2,7 +2,7 @@
 
 // app/Http/Controllers/Auth/RegisterController.php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,10 +16,13 @@ class RegisterController extends Controller
     {
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|unique:users,phonenumber',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'in:user,organizer,admin', // allowed roles
+            'role' => 'in:user,organizer,admin',
+            
         ]);
 
         if ($validator->fails()) {
@@ -28,10 +31,12 @@ class RegisterController extends Controller
 
         // Create the new user
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
+            'phonenumber' => $request->phone,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'user', // default to 'user' if not provided
+            'role' => $request->role ?? 'user',
         ]);
 
         // Optionally, you can log the user in after registration

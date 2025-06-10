@@ -2,7 +2,7 @@
 
 // app/Http/Controllers/Api/EventCategoryController.php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EventCategory;
@@ -16,7 +16,7 @@ class EventCategoryController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
         $request->validate(['name' => 'required|string|max:255']);
         $category = EventCategory::create(['name' => $request->name]);
         return response()->json($category, 201);

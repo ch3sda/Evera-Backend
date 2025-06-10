@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Models\User;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;  // <--- Add this line
+
 
 class AdminDashboardController extends Controller
 {

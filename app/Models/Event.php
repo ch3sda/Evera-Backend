@@ -30,4 +30,10 @@ class Event extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // All events in this category
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }
