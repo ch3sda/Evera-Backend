@@ -2,15 +2,19 @@
 // Evera-Backend/routes/api.php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController};
+use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController,OtpController};
 use App\Http\Controllers\Api\Admin\{AdminDashboardController, EventCategoryController, ApprovalController};
 use App\Http\Controllers\Api\Organizer\{EventController, TicketPolicyController, OrganizerNotificationController};
 use App\Http\Controllers\Api\Attendee\{EventViewController, TicketController, ReminderController};
 use App\Http\Controllers\Api\User\RequestController;
+use App\Http\Controllers\Api\StripeController;
 
 // Public (guest) routes
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/verify-otp', [OtpController::class, 'verify']);
+Route::post('/resend-otp', [OtpController::class, 'resend']);
+
 
 // Protected routes requiring authentication (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {

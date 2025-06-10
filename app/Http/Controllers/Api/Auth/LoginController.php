@@ -31,6 +31,12 @@ class LoginController extends Controller
             Log::info('Inactive user attempted login: ' . $user->email);
             return response()->json(['message' => 'Account is inactive'], 403);
         }
+        if ($user->role === 'unverified') {
+            return response()->json([
+                'message' => 'Account is not verified. Please check your email for the OTP.'
+            ], 403);
+        }
+
 
         // Create a token
         $token = $user->createToken('auth_token')->plainTextToken;
