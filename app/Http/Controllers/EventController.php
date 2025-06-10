@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\EventNotification;
 
 class EventController extends Controller
 {
@@ -118,5 +120,15 @@ class EventController extends Controller
 
         return response()->json($events);
     }
+    public function sendNotification(Request $request)
+{
+    $attendees = User::whereHas('events', function ($q) use ($request) {
+        $q->where('event_id', $request->event_id);
+    })->get();
+
+    Notification::send($attendees, new EventNotification($request->message));
+
+    return back()->with('success', 'Notification sent!');
+}
 
 }
