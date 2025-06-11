@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Mail\SendOtpMail;
+use Illuminate\Support\Facades\Mail;
 
 class OtpController extends Controller
 {

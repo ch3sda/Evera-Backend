@@ -27,9 +27,9 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        if (!$user->active) {
-            return response()->json(['message' => 'Account is inactive'], 403);
-        }
+        // if (!$user->active) {
+        //     return response()->json(['message' => 'Account is inactive'], 403);
+        // }
 
         if ($user->role === 'unverified') {
             return response()->json([

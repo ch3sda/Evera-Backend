@@ -24,6 +24,7 @@ class Kernel extends HttpKernel
             \Fruitcake\Cors\HandleCors::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
+            
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,

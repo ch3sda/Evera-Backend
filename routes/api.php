@@ -2,7 +2,7 @@
 // Evera-Backend/routes/api.php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController,OtpController};
+use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController,OtpController,ProfileController};
 use App\Http\Controllers\Api\Admin\{AdminDashboardController, EventCategoryController, ApprovalController};
 use App\Http\Controllers\Api\Organizer\{EventController, TicketPolicyController, OrganizerNotificationController};
 use App\Http\Controllers\Api\Attendee\{EventViewController, TicketController, ReminderController};
@@ -15,15 +15,13 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/verify-otp', [OtpController::class, 'verify']);
 Route::post('/resend-otp', [OtpController::class, 'resend']);
 
-
 // Protected routes requiring authentication (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/logout', [LogoutController::class, 'logout']);
     
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+// routes/api.php
+    Route::get('/user', [ProfileController::class, 'show']);
 
     // Admin routes - add role check middleware if you have one, e.g. 'role:admin'
     Route::middleware('role:admin')->prefix('admin')->group(function () {
