@@ -9,7 +9,6 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             \Fruitcake\Cors\HandleCors::class,
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Http\Middleware\HandleCors::class, // also okay here
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -22,7 +21,7 @@ class Kernel extends HttpKernel
         'api' => [
             \Illuminate\Http\Middleware\HandleCors::class, // also okay here
             \Fruitcake\Cors\HandleCors::class,
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -33,6 +32,8 @@ class Kernel extends HttpKernel
         ],
         
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
 
     ];
 }

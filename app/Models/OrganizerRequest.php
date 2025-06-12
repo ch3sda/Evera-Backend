@@ -8,7 +8,9 @@ class OrganizerRequest extends Model
 {
     protected $fillable = [
         'user_id',
-        'status' // 'pending', 'approved', 'rejected'
+        'status', // 'pending', 'approved', 'rejected'
+        'reason',
+        'request_attempt'
     ];
 
     public function user()

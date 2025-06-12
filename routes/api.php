@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController,OtpController,ProfileController};
 use App\Http\Controllers\Api\Admin\{AdminDashboardController, EventCategoryController, ApprovalController};
 use App\Http\Controllers\Api\Organizer\{EventController, TicketPolicyController, OrganizerNotificationController};
-use App\Http\Controllers\Api\Attendee\{EventViewController, TicketController, ReminderController};
-use App\Http\Controllers\Api\User\RequestController;
+use App\Http\Controllers\Api\Attendee\{EventViewController, TicketController, ReminderController,OrganizerRequestController};
 use App\Http\Controllers\Api\StripeController;
 
 // Public (guest) routes
@@ -26,11 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin routes - add role check middleware if you have one, e.g. 'role:admin'
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::apiResource('categories', EventCategoryController::class);
-        Route::get('dashboard', [AdminDashboardController::class, 'stats']);
-        Route::post('approvals', [ApprovalController::class, 'approveOrganizerRequest']);
+        Route::get('user-stats', [AdminDashboardController::class, 'userStats']);
+        Route::post('/organizer-requests', [ApprovalController::class, 'approveOrganizerRequest']);
+        Route::get('/organizer-requests', [\App\Http\Controllers\Api\Admin\OrganizerRequestController::class, 'index']);
+
     });
 
-    // Organizer routes
+    // Organizer routes        Route::post('approvals', [ApprovalController::class, 'approveOrganizerRequest']);
+
     Route::middleware('role:organizer')->prefix('organizer')->group(function () {
         Route::apiResource('events', EventController::class);
         Route::apiResource('ticket-policies', TicketPolicyController::class);
@@ -40,15 +42,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Attendee routes
     Route::middleware('role:attendee')->prefix('attendee')->group(function () {
+        Route::post('request-organizer', [OrganizerRequestController::class, 'request']);
         Route::get('events/upcoming', [EventViewController::class, 'upcoming']);
         Route::apiResource('tickets', TicketController::class);
         Route::apiResource('reminders', ReminderController::class);
-    });
-
-    // User routes (generic authenticated user)
-    Route::middleware('role:user')->prefix('user')->group(function () {
-        Route::post('request-organizer', [RequestController::class, 'store']);
-        
     });
 
     // Stripe payment method routes

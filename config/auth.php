@@ -39,7 +39,11 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-        ],
+            ],
+        'api' => [ // Add this if using token auth for APIs
+        'driver' => 'sanctum',
+        'provider' => 'users',
+    ],    
     ],
 
     /*

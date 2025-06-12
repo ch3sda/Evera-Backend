@@ -10,13 +10,18 @@ use App\Http\Controllers\Controller;  // <--- Add this line
 
 class AdminDashboardController extends Controller
 {
-    public function stats()
+    public function userStats()
     {
+        $total = User::count();
+        $attendees = User::where('role', 'attendee')->count();
+        $organizers = User::where('role', 'organizer')->count();
+        $admins = User::where('role', 'admin')->count();
+
         return response()->json([
-            'total_users' => User::where('role', 'user')->count(),
-            'total_organizers' => User::where('role', 'organizer')->count(),
-            'total_events' => Event::count(),
-            'total_reported_events' => 0 // Change this if you add an EventReport model
+            'total' => $total,
+            'attendee' => $attendees,
+            'organizer' => $organizers,
+            'admin' => $admins,
         ]);
     }
 }

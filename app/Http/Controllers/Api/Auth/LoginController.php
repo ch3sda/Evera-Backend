@@ -5,51 +5,43 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
-    {
-        // Validate input
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-            'remember' => ['nullable', 'boolean'],
-        ]);
+public function login(Request $request)
+{
+    // Validate input (email & password)
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+        'remember' => 'boolean',
+    ]);
 
-        // Attempt login
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            Log::warning('Login attempt failed for email: ' . $request->email);
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
+    $user = User::where('email', $request->email)->first();
 
-        $user = Auth::user();
-
-        // if (!$user->active) {
-        //     return response()->json(['message' => 'Account is inactive'], 403);
-        // }
-
-        if ($user->role === 'unverified') {
-            return response()->json([
-                'message' => 'Account is not verified. Please check your email for the OTP.'
-            ], 403);
-        }
-
-        // Use long-lived token name if "remember" is true
-        $tokenName = $request->remember ? 'auth_token_remembered' : 'auth_token';
-        $token = $user->createToken($tokenName)->plainTextToken;
-
-        return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-        ]);
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    $remember = $request->boolean('remember', false);
+
+    // Create token with expiry depending on 'remember me'
+    $tokenResult = $user->createToken('authToken', [], now()->addMinutes($remember ? 43200 : 60)); // 30 days or 1 hour
+    $token = $tokenResult->plainTextToken;
+
+    // Explicitly save expires_at (Sanctum 3.x)
+    $tokenResult->accessToken->expires_at = $remember ? now()->addDays(30) : now()->addHour();
+    $tokenResult->accessToken->save();
+
+    return response()->json([
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+        'expires_at' => $tokenResult->accessToken->expires_at,
+        'user' => $user,
+    ]);
+}
 
 }
