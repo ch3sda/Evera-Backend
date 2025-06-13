@@ -6,7 +6,7 @@ namespace App\Mail;
 use Illuminate\Mail\Mailable;
 use App\Models\User;
 // app/Mail/RequestRejectedMail.php
-class RequestRejectedMail extends Mailable
+class RemoveOrganizerMail extends Mailable
 {
     public $user;
 
@@ -17,8 +17,8 @@ class RequestRejectedMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your Organizer Request was Rejected')
-                    ->view('emails.rejected');
+        return $this->subject('Your Organizer Role was Removed')
+                    ->view('emails.removeOrganizer');
     }
 }
 

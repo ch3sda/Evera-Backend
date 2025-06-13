@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RemoveOrganizerMail;
 use App\Models\User;
 use App\Models\OrganizerRequest;
 use App\Mail\RequestRejectedMail;
@@ -23,7 +24,7 @@ class ApprovalController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'status' => 'required|in:approved,rejected,pending',
+            'status' => 'required|in:approved,rejected,pending,removed',
         ]);
 
         $user = User::findOrFail($request->user_id);
@@ -46,7 +47,15 @@ class ApprovalController extends Controller
         }
 
         if ($request->status === 'rejected') {
+            $user->role = 'attendee';
+            $user->save();
             Mail::to($user->email)->send(new RequestRejectedMail($user));
+        }
+
+        if ($request->status === 'removed') {
+            $user->role = 'attendee';
+            $user->save();
+            Mail::to($user->email)->send(new RemoveOrganizerMail($user));
         }
 
         return response()->json(['message' => 'Request updated.']);

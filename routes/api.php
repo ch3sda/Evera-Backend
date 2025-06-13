@@ -1,6 +1,5 @@
 <?php
 // Evera-Backend/routes/api.php
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\{LoginController, RegisterController, LogoutController,OtpController,ProfileController};
 use App\Http\Controllers\Api\Admin\{AdminDashboardController, EventCategoryController, ApprovalController};
@@ -24,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin routes - add role check middleware if you have one, e.g. 'role:admin'
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::apiResource('categories', EventCategoryController::class);
+        Route::apiResource('categories', controller: EventCategoryController::class);
         Route::get('user-stats', [AdminDashboardController::class, 'userStats']);
         Route::post('/organizer-requests', [ApprovalController::class, 'approveOrganizerRequest']);
         Route::get('/organizer-requests', [\App\Http\Controllers\Api\Admin\OrganizerRequestController::class, 'index']);
