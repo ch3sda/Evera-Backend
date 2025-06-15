@@ -1,39 +1,34 @@
 <?php
 
-namespace App\Models;
+// app/Models/Event.php
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+namespace App\Models;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
-    // Define fillable attributes to allow mass assignment
     protected $fillable = [
-        'user_id',
-        'category_id',
-        'title',
-        'description',
+        'user_id', 
+        'category_id', 
+        'title', 
+        'description', 
         'location',
-        'event_datetime',
+        'event_datetime', 
+        'image_path'
     ];
 
-    // Define the relationship to the EventCategory model
-    public function category()
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(EventCategory::class);
+        return $this->belongsTo(EventCategory::class, 'category_id');
     }
 
-    // Define the relationship to the User model (organizer)
-    public function organizer()
+    public function organizer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    // All events in this category
-    public function events()
-    {
-        return $this->hasMany(Event::class);
     }
 }
