@@ -18,10 +18,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'role',
+        'phonenumber', // add this line
+        'otp_code',          // ✅ add this
+        'otp_expires_at',    // ✅ and this
+
     ];
 
     /**
@@ -45,5 +50,28 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // All events created by this user
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+
+    // ✅ Helper methods
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOrganizer(): bool
+    {
+        return $this->role === 'organizer';
+    }
+
+    public function isAttendee(): bool
+    {
+        return $this->role === 'attendee';
     }
 }
