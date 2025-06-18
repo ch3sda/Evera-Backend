@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin routes - add role check middleware if you have one, e.g. 'role:admin'
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::apiResource('/categories', controller: EventCategoryController::class);
+        Route::apiResource(name: '/categories', controller: EventCategoryController::class);
         Route::get('/user-stats', [AdminDashboardController::class, 'userStats']);
         Route::post('/organizer-requests', [ApprovalController::class, 'approveOrganizerRequest']);
         Route::get('/organizer-requests', [\App\Http\Controllers\Api\Admin\OrganizerRequestController::class, 'index']);
@@ -33,9 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Organizer routes        Route::post('approvals', [ApprovalController::class, 'approveOrganizerRequest']);
 
     Route::middleware('role:organizer')->prefix('organizer')->group(function () {
-        Route::apiResource('/events', EventController::class);
+        Route::apiResource('/events', controller: EventController::class);
         Route::apiResource('/ticket-policies', TicketPolicyController::class);
         Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
+         Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);
         Route::get('/dashboard', [EventController::class, 'dashboardStats']); // example dashboard method
     });
 
