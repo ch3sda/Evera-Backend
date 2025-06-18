@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
@@ -18,7 +17,7 @@ class Event extends Model
         'description',
         'location',
         'event_datetime',
-        'image_path',
+        'image_path',   // store relative key only
         'price',
         'is_refundable',
     ];
@@ -28,16 +27,6 @@ class Event extends Model
         'is_refundable' => 'boolean',
         'price' => 'float',
     ];
-
-    public function hasPurchasedTickets(): bool
-    {
-        return $this->tickets()->exists();
-    }
-
-    public function tickets(): HasMany
-    {
-        return $this->hasMany(Ticket::class);
-    }
 
     public function category(): BelongsTo
     {
