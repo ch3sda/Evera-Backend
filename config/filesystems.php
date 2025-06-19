@@ -59,6 +59,20 @@ return [
             'throw' => false,
             'report' => false,
         ],
+    'r2' => [
+        'driver' => 's3',
+        'key' => env('R2_KEY'),
+        'secret' => env('R2_SECRET'),
+        'region' => env('R2_REGION', 'us-east-1'),
+        'bucket' => env('R2_BUCKET'),
+        'endpoint' => env('R2_ENDPOINT'),
+        'use_path_style_endpoint' => true,
+        'visibility' => 'public',
+        'throw' => true,
+        'report' => false,
+        'url' => env('R2_PUBLIC_URL'),  // add this
+    ],
+
 
     ],
 
@@ -76,5 +90,7 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
+
+    
 
 ];

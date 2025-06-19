@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Admin\{AdminDashboardController, EventCategoryContr
 use App\Http\Controllers\Api\Organizer\{EventController, TicketPolicyController, OrganizerNotificationController};
 use App\Http\Controllers\Api\Attendee\{EventViewController, TicketController, ReminderController,OrganizerRequestController};
 use App\Http\Controllers\Api\StripeController;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 // Public (guest) routes
 Route::post('/login', [LoginController::class, 'login']);
@@ -23,20 +25,40 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin routes - add role check middleware if you have one, e.g. 'role:admin'
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::apiResource('/categories', controller: EventCategoryController::class);
+        Route::apiResource(name: '/categories', controller: EventCategoryController::class);
         Route::get('/user-stats', [AdminDashboardController::class, 'userStats']);
         Route::post('/organizer-requests', [ApprovalController::class, 'approveOrganizerRequest']);
         Route::get('/organizer-requests', [\App\Http\Controllers\Api\Admin\OrganizerRequestController::class, 'index']);
-
+        
     });
 
     // Organizer routes        Route::post('approvals', [ApprovalController::class, 'approveOrganizerRequest']);
 
     Route::middleware('role:organizer')->prefix('organizer')->group(function () {
-        Route::apiResource('/events', EventController::class);
-        Route::apiResource('/ticket-policies', TicketPolicyController::class);
+        
+    Route::get('/events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'store']);
+    Route::post('/events/{id}', [EventController::class, 'update']);
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);        Route::apiResource('/ticket-policies', TicketPolicyController::class);
         Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
-        Route::get('/dashboard', [EventController::class, 'dashboardStats']); // example dashboard method
+         Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);
+// Route::post('/test-upload', function(Request $request) {
+//     if (!$request->hasFile('image')) {
+//         return response()->json(['error' => 'No image file sent'], 400);
+//     }
+//     try {
+//         $image = $request->file('image');
+//         $key = 'test/' . uniqid() . '.' . $image->getClientOriginalExtension();
+//         Log::info("Uploading test image to R2 with key: $key");
+//         Storage::disk('r2')->put($key, $image->get(), 'public');
+//         $url = Storage::disk('r2')->url($key);
+//         Log::info("Upload success, URL: $url");
+//         return response()->json(['message' => 'Uploaded', 'key' => $key, 'url' => $url]);
+//     } catch (\Exception $e) {
+//         Log::error("Upload failed: " . $e->getMessage());
+//         return response()->json(['error' => 'Upload failed', 'details' => $e->getMessage()], 500);
+//     }
+// });        
     });
 
     // Attendee routes
@@ -45,8 +67,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/events/upcoming', [EventViewController::class, 'upcoming']);
         Route::apiResource('tickets', TicketController::class);
         Route::apiResource('reminders', ReminderController::class);
+        
     });
 
+
+    Route::get('/events', [EventViewController::class, 'index']);
+Route::get('/events/{id}', [EventViewController::class, 'show']);
     // Stripe payment method routes
     Route::middleware('auth:sanctum')->post('/stripe/payment-method', [StripeController::class, 'storePaymentMethod']);
 

@@ -1,11 +1,9 @@
 <?php
 
-// app/Models/Event.php
-
 namespace App\Models;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
@@ -13,13 +11,21 @@ class Event extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id', 
-        'category_id', 
-        'title', 
-        'description', 
+        'user_id',
+        'category_id',
+        'title',
+        'description',
         'location',
-        'event_datetime', 
-        'image_path'
+        'event_datetime',
+        'image_path',   // store relative key only
+        'price',
+        'is_refundable',
+    ];
+
+    protected $casts = [
+        'event_datetime' => 'datetime',
+        'is_refundable' => 'boolean',
+        'price' => 'float',
     ];
 
     public function category(): BelongsTo
