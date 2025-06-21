@@ -32,28 +32,17 @@ Route::middleware('auth:sanctum')->group(function () {
         
     });
 
-        Route::middleware('role:organizer')->prefix('organizer')->group(function () {
-        
-         Route::get('/events', [EventController::class, 'index']);
-        Route::post('/events', [EventController::class, 'store']);
-         Route::post('/events/{id}', [EventController::class, 'update']);
-         Route::delete('/events/{id}', [EventController::class, 'destroy']);        Route::apiResource('/ticket-policies', TicketPolicyController::class);
-          Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
-         Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);      
-    });
-
     // Organizer routes        Route::post('approvals', [ApprovalController::class, 'approveOrganizerRequest']);
 
-
-
-        Route::middleware('role:admin')->prefix('organizer')->group(function () {
+    Route::middleware('role:organizer')->prefix('organizer')->group(function () {
         
-         Route::get('/events', [EventController::class, 'index']);
-        Route::post('/events', [EventController::class, 'store']);
-         Route::post('/events/{id}', [EventController::class, 'update']);
-         Route::delete('/events/{id}', [EventController::class, 'destroy']);        Route::apiResource('/ticket-policies', TicketPolicyController::class);
-          Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
-         Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);      
+    Route::get('/events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'store']);
+    Route::post('/events/{id}', [EventController::class, 'update']);
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);        Route::apiResource('/ticket-policies', TicketPolicyController::class);
+        Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
+         Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);
+      
     });
 
     // Attendee routes
@@ -65,7 +54,6 @@ Route::middleware('auth:sanctum')->group(function () {
         
     });
 
-    Route::post('/events/purchase', [StripeController::class, 'storePurchase']); // or a separate controller
 
     Route::get('/events', [EventViewController::class, 'index']);
 Route::get('/events/{id}', [EventViewController::class, 'show']);
