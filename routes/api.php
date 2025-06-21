@@ -42,23 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}', [EventController::class, 'destroy']);        Route::apiResource('/ticket-policies', TicketPolicyController::class);
         Route::post('/notifications/send', [OrganizerNotificationController::class, 'send']);
          Route::get('/categories', [App\Http\Controllers\Api\Organizer\OrganizerEventCategoryController::class, 'index']);
-// Route::post('/test-upload', function(Request $request) {
-//     if (!$request->hasFile('image')) {
-//         return response()->json(['error' => 'No image file sent'], 400);
-//     }
-//     try {
-//         $image = $request->file('image');
-//         $key = 'test/' . uniqid() . '.' . $image->getClientOriginalExtension();
-//         Log::info("Uploading test image to R2 with key: $key");
-//         Storage::disk('r2')->put($key, $image->get(), 'public');
-//         $url = Storage::disk('r2')->url($key);
-//         Log::info("Upload success, URL: $url");
-//         return response()->json(['message' => 'Uploaded', 'key' => $key, 'url' => $url]);
-//     } catch (\Exception $e) {
-//         Log::error("Upload failed: " . $e->getMessage());
-//         return response()->json(['error' => 'Upload failed', 'details' => $e->getMessage()], 500);
-//     }
-// });        
+      
     });
 
     // Attendee routes
