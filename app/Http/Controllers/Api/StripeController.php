@@ -49,4 +49,49 @@ class StripeController extends Controller
 
         return response()->json(['message' => 'Card saved successfully.']);
     }
+    public function createPaymentIntent(Request $request)
+{
+    $request->validate([
+        'event_id' => 'required|exists:events,id',
+    ]);
+
+    $user = $request->user();
+    $event = Event::findOrFail($request->event_id);
+
+    Stripe::setApiKey(env('STRIPE_SECRET'));
+
+    // Optional: create customer if needed
+    if (!$user->stripe_customer_id) {
+        $customer = Customer::create([
+            'email' => $user->email,
+            'name' => $user->name,
+        ]);
+        $user->stripe_customer_id = $customer->id;
+        $user->save();
+    }
+
+    // Calculate price + VAT (10%, max $5)
+    $baseAmount = $event->price * 100; // in cents
+    $vat = min($baseAmount * 0.10, 500); // max $5 = 500 cents
+    $totalAmount = intval(round($baseAmount + $vat));
+
+    // Create PaymentIntent
+    $intent = PaymentIntent::create([
+        'amount' => $totalAmount,
+        'currency' => 'usd',
+        'customer' => $user->stripe_customer_id,
+        'description' => 'Ticket purchase: ' . $event->title,
+        'metadata' => [
+            'user_id' => $user->id,
+            'event_id' => $event->id,
+        ],
+    ]);
+
+    return response()->json([
+        'clientSecret' => $intent->client_secret,
+        'amount' => $totalAmount / 100,
+        'vat' => $vat / 100,
+        'event_title' => $event->title,
+    ]);
+}
 }
